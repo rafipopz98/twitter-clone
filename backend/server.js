@@ -22,10 +22,10 @@ cloudinary.config({
 });
 
 
-app.use("/auth", authRouter)
-app.use("/users", userRoute)
-app.use("/post", postRoute)
-app.use("/notifications", notificationRoutes);
+app.use("/api/auth", authRouter)
+app.use("/api/users", userRoute)
+app.use("/api/post", postRoute)
+app.use("/api/notifications", notificationRoutes);
 
 
 
