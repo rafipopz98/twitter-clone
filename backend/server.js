@@ -5,7 +5,7 @@ import connectDB from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
 import userRoute from './routes/userRouter.js'
-
+import postRoute from './routes/postRoute.js'
 dotenv.config()
 const app = express();
 
@@ -22,6 +22,8 @@ cloudinary.config({
 
 app.use("/auth", authRouter)
 app.use("/users", userRoute)
+app.use("/post", postRoute)
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
