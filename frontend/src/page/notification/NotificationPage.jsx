@@ -4,32 +4,48 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import { toast } from "react-hot-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const NotificationPage = () => {
-  const isLoading = false;
-  const notifications = [
-    {
-      _id: "1",
-      from: {
-        _id: "1",
-        username: "johndoe",
-        profileImg: "/avatars/boy2.jpeg",
-      },
-      type: "follow",
+  const { data: notificationData, isLoading } = useQuery({
+    queryKey: ["notification"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/notifications");
+        const data = res.json();
+        if (!res.ok)
+          throw new Error(data.error || "failed to fetch notification");
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
     },
-    {
-      _id: "2",
-      from: {
-        _id: "2",
-        username: "janedoe",
-        profileImg: "/avatars/girl1.jpeg",
-      },
-      type: "like",
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteNotification } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/notifications", { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to delete");
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
     },
-  ];
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notification"] });
+    },
+    onError: () => {
+      toast.error("failed to delete");
+    },
+  });
 
   const deleteNotifications = () => {
-    alert("All notifications deleted");
+    deleteNotification();
   };
 
   return (
@@ -56,10 +72,10 @@ const NotificationPage = () => {
             <LoadingSpinner size="lg" />
           </div>
         )}
-        {notifications?.length === 0 && (
+        {notificationData?.length === 0 && (
           <div className="text-center p-4 font-bold">No notifications 🤔</div>
         )}
-        {notifications?.map((notification) => (
+        {notificationData?.map((notification) => (
           <div className="border-b border-gray-700" key={notification._id}>
             <div className="flex gap-2 p-4">
               {notification.type === "follow" && (
@@ -82,7 +98,7 @@ const NotificationPage = () => {
                 <div className="flex gap-1">
                   <span className="font-bold">
                     @{notification.from.username}
-                  </span>{" "}
+                  </span>
                   {notification.type === "follow"
                     ? "followed you"
                     : "liked your post"}
