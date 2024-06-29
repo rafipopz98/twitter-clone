@@ -11,7 +11,7 @@ import notificationRoutes from "./routes/notificationRouter.js";
 dotenv.config()
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -24,7 +24,7 @@ cloudinary.config({
 
 app.use("/api/auth", authRouter)
 app.use("/api/users", userRoute)
-app.use("/api/post", postRoute)
+app.use("/api/posts", postRoute)
 app.use("/api/notifications", notificationRoutes);
 
 
