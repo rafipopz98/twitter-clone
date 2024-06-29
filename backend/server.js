@@ -1,3 +1,4 @@
+import path from 'path'
 import express from "express"
 import authRouter from "./routes/authRouter.js";
 import dotenv from 'dotenv'
@@ -21,11 +22,22 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const __dirname = path.resolve();
+
+
 
 app.use("/api/auth", authRouter)
 app.use("/api/users", userRoute)
 app.use("/api/posts", postRoute)
 app.use("/api/notifications", notificationRoutes);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    });
+}
 
 
 
