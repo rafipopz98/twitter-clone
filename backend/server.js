@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
 import userRoute from './routes/userRouter.js'
 import postRoute from './routes/postRoute.js'
+import notificationRoutes from "./routes/notificationRouter.js";
+
 dotenv.config()
 const app = express();
 
@@ -23,6 +25,8 @@ cloudinary.config({
 app.use("/auth", authRouter)
 app.use("/users", userRoute)
 app.use("/post", postRoute)
+app.use("/notifications", notificationRoutes);
+
 
 
 const PORT = process.env.PORT;
